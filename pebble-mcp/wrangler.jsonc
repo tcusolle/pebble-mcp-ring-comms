@@ -1,0 +1,39 @@
+/**
+ * For more details on how to configure Wrangler, refer to:
+ * https://developers.cloudflare.com/workers/wrangler/configuration/
+ */
+{
+	"$schema": "node_modules/wrangler/config-schema.json",
+	"name": "voice-capture-worker",
+	"main": "src/index.ts",
+	"compatibility_date": "2025-03-10",
+	"compatibility_flags": ["nodejs_compat"],
+	"migrations": [
+		{
+			"new_sqlite_classes": ["MyMCP"],
+			"tag": "v1",
+		},
+	],
+	"durable_objects": {
+		"bindings": [
+			{
+				"class_name": "MyMCP",
+				"name": "MCP_OBJECT",
+			},
+		],
+	},
+	"d1_databases": [
+		{
+			"binding": "DB",
+			"database_name": "pebble-captures",
+			"database_id": "<your-d1-database-id>",
+		},
+	],
+	"observability": {
+		"enabled": true,
+	},
+	"triggers": {
+		// 11:00 UTC daily — adjust to change the digest time.
+		"crons": ["0 11 * * *"],
+	},
+}
